@@ -22,8 +22,16 @@ Author: Ankit Kalyani
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from auth import hash_password, verify_password, create_access_token
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],)
 
 # Temporary database (for testing)
 fake_db = {}
@@ -47,7 +55,17 @@ def signup(user: SignupUser):
         "password": hash_password(user.password)
     }
 
-    return {"message": "User created successfully"}
+    token = create_access_token({"sub": user.email})
+
+    return {
+        "user": {
+            "id": user.email,   # using email as temp ID
+            "name": user.full_name,
+            "email": user.email,
+            "plan": "free"
+        },
+        "token": token
+    }
 
 @app.post("/signin")
 def signin(user: SigninUser):
@@ -62,9 +80,35 @@ def signin(user: SigninUser):
     token = create_access_token({"sub": user.email})
 
     return {
-        "access_token": token,
-        "full_name": stored_user["full_name"],
-        "email": user.email
+    "user": {
+        "id": user.email,
+        "name": stored_user["full_name"],
+        "email": user.email,
+        "plan": "free"
+    },
+    "token": token
+
     }
+    app.mount("/assets", StaticFiles(directory="dist/assets"), name="assets")
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DIST_DIR = os.path.join(BASE_DIR, "dist")
+
+app.mount("/assets", StaticFiles(directory=os.path.join(DIST_DIR, "assets")), name="assets")
+
+@app.get("/{full_path:path}")
+async def serve_react(full_path: str):
+    file_path = os.path.join(DIST_DIR, full_path)
+
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        return FileResponse(file_path)
+
+    return FileResponse(os.path.join(DIST_DIR, "index.html"))
+  
+
     
  
