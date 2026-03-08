@@ -23,9 +23,12 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from auth import hash_password, verify_password, create_access_token
 from fastapi.middleware.cors import CORSMiddleware
-
+from chat.routes import router as chat_router
 
 app = FastAPI()
+
+app.include_router(chat_router, prefix="/chat")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -89,7 +92,7 @@ def signin(user: SigninUser):
     "token": token
 
     }
-    app.mount("/assets", StaticFiles(directory="dist/assets"), name="assets")
+    #app.mount("/assets", StaticFiles(directory="dist/assets"), name="assets")
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -98,16 +101,16 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DIST_DIR = os.path.join(BASE_DIR, "dist")
 
-app.mount("/assets", StaticFiles(directory=os.path.join(DIST_DIR, "assets")), name="assets")
+#app.mount("/assets", StaticFiles(directory=os.path.join(DIST_DIR, "assets")), name="assets")
 
-@app.get("/{full_path:path}")
-async def serve_react(full_path: str):
-    file_path = os.path.join(DIST_DIR, full_path)
+# @app.get("/{full_path:path}")
+# async def serve_react(full_path: str):
+#     file_path = os.path.join(DIST_DIR, full_path)
 
-    if os.path.exists(file_path) and os.path.isfile(file_path):
-        return FileResponse(file_path)
+#     if os.path.exists(file_path) and os.path.isfile(file_path):
+#         return FileResponse(file_path)
 
-    return FileResponse(os.path.join(DIST_DIR, "index.html"))
+#     return FileResponse(os.path.join(DIST_DIR, "index.html"))
   
 
     
