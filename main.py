@@ -24,6 +24,10 @@ from pydantic import BaseModel
 from auth import hash_password, verify_password, create_access_token
 from fastapi.middleware.cors import CORSMiddleware
 from chat.routes import router as chat_router
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = FastAPI()
 

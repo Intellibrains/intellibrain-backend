@@ -1,14 +1,18 @@
 import random
 import string
+import os
+from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from .twilio_service import generate_twilio_token
 from twilio.rest import Client
 
+load_dotenv()
+
 # Twilio Credentials
-ACCOUNT_SID = "AC1c5c3e959d710b360207f7d73923f6a4"
-API_KEY = "SK714412d49612dfaed96ccf781b4c1417"
-API_SECRET = "uMm2A71bkHHWrwNem4j0T9QqmRxpysMp"
+ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+API_KEY = os.getenv("TWILIO_API_KEY")
+API_SECRET = os.getenv("TWILIO_API_SECRET")
 
 twilio_client = Client(API_KEY, API_SECRET, ACCOUNT_SID)
 

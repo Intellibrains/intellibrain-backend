@@ -2,10 +2,12 @@
 from twilio.jwt.access_token import AccessToken
 from twilio.jwt.access_token.grants import ChatGrant
 
-ACCOUNT_SID = "AC1c5c3e959d710b360207f7d73923f6a4"
-API_KEY = "SK714412d49612dfaed96ccf781b4c1417"
-API_SECRET = "uMm2A71bkHHWrwNem4j0T9QqmRxpysMp"
-SERVICE_SID = "IS6cfae4dcfccc468a850acd39ef86ac66"
+import os
+
+ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+API_KEY = os.getenv("TWILIO_API_KEY")
+API_SECRET = os.getenv("TWILIO_API_SECRET")
+SERVICE_SID = os.getenv("TWILIO_SERVICE_SID")
 
 
 def generate_twilio_token(username: str):
